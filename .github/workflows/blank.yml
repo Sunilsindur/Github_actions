@@ -1,0 +1,28 @@
+name: Download package.json files
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo:
+        description: "Repo Name"
+        required: true
+
+env:
+  REPO: ${{ github.event.inputs.repo }}        
+
+jobs:
+  download_package.json:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Sparse checkout another repo
+        run: |
+          git clone --no-checkout https://github.com/Sunilsindur/$REPO remote-repo
+          cd remote-repo
+          git sparse-checkout init --cone
+          echo "*/package.json" >> .git/info/sparse-checkout
+          git checkout
+
+      - name: bash script to copy package.json files
+        run: |
+          find . -name "package.json" -exec cp {} ../ \;
