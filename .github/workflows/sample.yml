@@ -27,7 +27,12 @@ jobs:
         run: |
           find . -name "package.json" -exec cp {} ../ \;
           cd ..
-          cat package.json
+          for file in *; do
+            if [[ -f "$file" ]]; then
+              echo "Contents of $file:"
+              cat "$file"
+              echo "------------------------------------------"
+            fi
 
           
 
