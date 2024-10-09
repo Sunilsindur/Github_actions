@@ -25,7 +25,7 @@ jobs:
 
       - name: bash script to copy package.json files
         run: |
-          find . -name "package.json" -exec cp {} ../ \;
+          find . -name "*package.json" -exec cp {} ../ \;
           cd ..
           ls 
           for file in *; do
