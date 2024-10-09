@@ -26,3 +26,11 @@ jobs:
       - name: bash script to copy package.json files
         run: |
           find . -name "package.json" -exec cp {} ../ \;
+          cd ..
+          cat package.json
+
+          
+
+
+
+          
