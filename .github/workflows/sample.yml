@@ -32,7 +32,7 @@ jobs:
               echo "Contents of $file:"
               cat "$file"
               echo "------------------------------------------"
-            fi
+          fi
 
           
 
