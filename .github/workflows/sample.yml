@@ -34,9 +34,9 @@ jobs:
           cd ../json-files
           echo "Files copied with directory names:"
           find . -type f \( -name "package.json" -o -name "demo.json" \) | while read file; do
+            dir_name=$(basename "$(dirname "$file")")
             echo "------------------------------------------"
-            echo "File path: $file"
-            echo "Directory: $(dirname "$file")"
+            echo "Directory: $(dirname "$dir_name")"
             echo "Contents of $file:"
             cat "$file"
             echo "------------------------------------------"
