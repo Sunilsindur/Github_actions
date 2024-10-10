@@ -20,7 +20,7 @@ jobs:
           git clone --no-checkout https://github.com/Sunilsindur/$REPO remote-repo
           cd remote-repo
           git sparse-checkout init --cone
-          echo "*/package.json" >> .git/info/sparse-checkout
+          echo "*package.json" >> .git/info/sparse-checkout
           git checkout
 
       - name: bash script to copy package.json files
