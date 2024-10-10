@@ -44,6 +44,8 @@ jobs:
             cat "$file"
             echo "------------------------------------------"
           done
+          cd remote-repo
+          ls
 
           
 
