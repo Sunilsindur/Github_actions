@@ -33,8 +33,10 @@ jobs:
         run: |
           cd ../json-files
           pwd
+          ls
           echo "Folders containing package.json or demo.json files and their contents:"
           find . -type f \( -name "package.json" -o -name "demo.json" \) | while read file; do
+            ls
             folder_name=$(basename "$(dirname "$file")")
             echo "------------------------------------------"
             echo "Folder: $folder_name"
