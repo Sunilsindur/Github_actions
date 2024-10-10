@@ -32,7 +32,7 @@ jobs:
       - name: display directories name and content of files
         run: |
           cd ../json-files
-          ls -a
+          pwd
           echo "Folders containing package.json or demo.json files and their contents:"
           find . -type f \( -name "package.json" -o -name "demo.json" \) | while read file; do
             folder_name=$(basename "$(dirname "$file")")
