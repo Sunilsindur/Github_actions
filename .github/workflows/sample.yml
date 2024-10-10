@@ -21,20 +21,26 @@ jobs:
           cd remote-repo
           git sparse-checkout init --cone
           echo "*package.json" >> .git/info/sparse-checkout
+          echo "*demo.json" >> .git/info/sparse-checkout
           git checkout
 
-      - name: bash script to copy package.json files
+      - name: bash script to copy package.json files or demo.json files with there dir name
         run: |
-          find . -name "*package.json" -exec cp {} ../ \;
-          cd ..
-          ls 
-          for file in *; do
-            if [[ -f "$file" ]]; then
-              echo "Contents of $file:"
-              cat "$file"
-              echo "------------------------------------------"
-            fi
-          done  
+          mkdir -p ../json-files
+          find . -type f \( -name "package.json" -o -name "demo.json" \) -exec bash -c 'mkdir -p ../json-files/$(dirname "{}"); cp "{}" ../json-files/$(dirname "{}")' \;
+
+      - name: display directories name and content of files
+        run: |
+          cd ../json-files
+          echo "Files copied with directory names:"
+          find . -type f \( -name "package.json" -o -name "demo.json" \) | while read file; do
+            echo "------------------------------------------"
+            echo "File path: $file"
+            echo "Directory: $(dirname "$file")"
+            echo "Contents of $file:"
+            cat "$file"
+            echo "------------------------------------------"
+          done
 
           
 
