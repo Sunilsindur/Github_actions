@@ -33,63 +33,67 @@ jobs:
         run: |
           cd ../json-files
           echo "Folders containing package.json or demo.json files and their contents:"
+
+          # Loop through all package.json or demo.json files in the directory and its subdirectories
           find . -type f \( -name "package.json" -o -name "demo.json" \) | while read file; do
-            # folder_name=$(basename "$(dirname "$file")")
-            # echo "------------------------------------------"
-            # echo "Folder: $folder_name"
-            # echo "Contents of $file:"
-            # cat "$file"
-            # echo "------------------------------------------"
-            
-            #!/bin/bash
-
-          # Define the component name and other static fields
-          COMPONENT_NAME="electron"
-          SOURCE="GitHub"
-          STAGE="DEV"
-          MEASURE_NAME="Component Dependencies"
           
-          # Read the package.json file and extract dependencies and versions using jq
-          DEPENDENCIES=$(jq '.devDependencies' package.json)
+            echo "Processing file: $file"
           
-          # Create an empty JSON array to store the formatted result
-          RESULT_JSON="[]"
+            # Define static fields for the component
+            COMPONENT_NAME=$(basename "$(dirname "$file")")  # Use the directory name as the component name
+            SOURCE="GitHub"
+            STAGE="DEV"
+            MEASURE_NAME="Component Dependencies"
           
-          # Loop through each dependency and format it into the desired structure
-          for DEP in $(echo "$DEPENDENCIES" | jq -r 'keys[]'); do
-            VERSION=$(echo "$DEPENDENCIES" | jq -r --arg dep "$DEP" '.[$dep]')
-            
-            # Create the dependency JSON object
-            DEP_JSON=$(jq -n \
-              --arg dep "$DEP" \
-              --arg ver "$VERSION" \
-              '{"dependencyName": $dep, "version": $ver}')
+            # Read the package.json or demo.json file and extract dependencies and versions using jq
+            DEPENDENCIES=$(jq '.devDependencies' "$file")
           
-            # Add the dependency to the result array
-            RESULT_JSON=$(echo "$RESULT_JSON" | jq --argjson dep "$DEP_JSON" '. + [$dep]')
+            # Check if the file has devDependencies
+            if [ "$DEPENDENCIES" != "null" ]; then
+              # Create an empty JSON array to store the formatted result
+              RESULT_JSON="[]"
+          
+              # Loop through each dependency and format it into the desired structure
+              for DEP in $(echo "$DEPENDENCIES" | jq -r 'keys[]'); do
+                VERSION=$(echo "$DEPENDENCIES" | jq -r --arg dep "$DEP" '.[$dep]')
+          
+                # Create the dependency JSON object
+                DEP_JSON=$(jq -n \
+                  --arg dep "$DEP" \
+                  --arg ver "$VERSION" \
+                  '{"dependencyName": $dep, "version": $ver}')
+          
+                # Add the dependency to the result array
+                RESULT_JSON=$(echo "$RESULT_JSON" | jq --argjson dep "$DEP_JSON" '. + [$dep]')
+              done
+          
+              # Wrap the dependencies in the final object structure
+              FINAL_JSON=$(jq -n \
+                --arg comp "$COMPONENT_NAME" \
+                --arg src "$SOURCE" \
+                --arg stage "$STAGE" \
+                --arg meas "$MEASURE_NAME" \
+                --argjson data "$RESULT_JSON" \
+                '[{
+                  "componentName": $comp,
+                  "source": $src,
+                  "stage": $stage,
+                  "measures": [{
+                    "measureName": $meas,
+                    "data": $data
+                  }]
+                }]')
+          
+              # Output the final JSON
+              echo "$FINAL_JSON"
+            else
+              echo "No devDependencies found in $file"
+            fi
+          
           done
-          
-          # Wrap the dependencies in the final object structure
-          FINAL_JSON=$(jq -n \
-            --arg comp "$COMPONENT_NAME" \
-            --arg src "$SOURCE" \
-            --arg stage "$STAGE" \
-            --arg meas "$MEASURE_NAME" \
-            --argjson data "$RESULT_JSON" \
-            '[{
-              "componentName": $comp,
-              "source": $src,
-              "stage": $stage,
-              "measures": [{
-                "measureName": $meas,
-                "data": $data
-              }]
-            }]')
-          
-          # Output the final JSON
-          echo "$FINAL_JSON"
-
-          done
+  
+         
+        
         
 
           
