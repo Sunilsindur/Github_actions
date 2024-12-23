@@ -2,8 +2,8 @@ name: Run at 7:50 AM CST on December 23, 2024
 
 on:
   schedule:
-    # Runs at 1:50 PM UTC on Monday, 23 December 2024
-    - cron: '55 7 23 12 1'
+    - timezone: 'America/Chicago'
+    - cron: '59 7 23 12 1'
 
 jobs:
   scheduled-job:
